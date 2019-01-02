@@ -5,6 +5,16 @@
 ## Build generated
 build/
 DerivedData/
+*.o
+*.LinkFileList
+*.hmap
+
+# Automatic backup files
+*~.nib/
+*.swp
+*~
+*.dat
+*.dep
 
 ## Various settings
 *.pbxuser

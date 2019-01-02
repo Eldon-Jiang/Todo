@@ -11,15 +11,15 @@ import UIKit
 class ListTableViewController: UITableViewController {
 
     // Declare instance variables here
-    var todoArray: [String] = []
+    var todoArray: [Item] = [Item]()
     let defaults: UserDefaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        if let todos = defaults.array(forKey: "todoArray") as? [String] {
-            todoArray = todos
-        }
+        
+        let testItem = Item()
+        testItem.title = "Eat apple"
+        todoArray.append(testItem)
         
     }
 
@@ -39,19 +39,18 @@ class ListTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "todoCell", for: indexPath)
 
-        cell.textLabel?.text = todoArray[indexPath.row]
+        cell.textLabel?.text = todoArray[indexPath.row].title
+        cell.accessoryType = todoArray[indexPath.row].done ? .checkmark : .none
 
         return cell
     }
     
     //TODO: selected cell methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Selected: \(todoArray[indexPath.row])")
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        
+        todoArray[indexPath.row].done = !todoArray[indexPath.row].done
+        
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
@@ -65,8 +64,11 @@ class ListTableViewController: UITableViewController {
         
         let addAction = UIAlertAction(title: "OK", style: .default) { (action) in
             if tmpTextField.text != "" {
-                self.todoArray.append(tmpTextField.text!)
-                self.defaults.set(self.todoArray, forKey: "todoArray")
+                let newItem = Item()
+                newItem.title = tmpTextField.text!
+                newItem.done = false
+                self.todoArray.append(newItem)
+                
             }
             self.tableView.reloadData()
         }
@@ -87,41 +89,4 @@ class ListTableViewController: UITableViewController {
         
     }
     
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
