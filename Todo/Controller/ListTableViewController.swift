@@ -13,14 +13,38 @@ class ListTableViewController: UITableViewController {
     // Declare instance variables here
     var todoArray: [Item] = [Item]()
     let defaults: UserDefaults = UserDefaults.standard
+    let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let testItem = Item()
-        testItem.title = "Eat apple"
-        todoArray.append(testItem)
+        loadData()
+    }
+    
+    // MARK: - NSCoder encodes and decodes
+    
+    func saveData() {
         
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(self.todoArray)
+            try data.write(to: self.filePath!)
+        } catch {
+            print("Error in saving item array.")
+        }
+    }
+    
+    func loadData() {
+        
+        if let data = try? Data(contentsOf: filePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                let dataArray = try decoder.decode([Item].self, from: data)
+                todoArray = dataArray
+            } catch {
+                print("Error in loading item array")
+            }
+        }
     }
 
     // MARK: - Table view related
@@ -49,26 +73,27 @@ class ListTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         todoArray[indexPath.row].done = !todoArray[indexPath.row].done
-        
+        saveData()
         tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
 
-    //MARK: Add new item
+    //TODO: add new item in
     
     @IBAction func addPressed(_ sender: UIBarButtonItem) {
         var tmpTextField = UITextField()
         
-        let alert = UIAlertController(title: "Add", message: "Add item to list.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add", message: nil, preferredStyle: .alert)
         
         let addAction = UIAlertAction(title: "OK", style: .default) { (action) in
             if tmpTextField.text != "" {
                 let newItem = Item()
                 newItem.title = tmpTextField.text!
                 newItem.done = false
-                self.todoArray.append(newItem)
                 
+                self.todoArray.append(newItem)
+                self.saveData()
             }
             self.tableView.reloadData()
         }
