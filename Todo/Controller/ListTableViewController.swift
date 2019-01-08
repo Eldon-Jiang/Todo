@@ -7,44 +7,40 @@
 //
 
 import UIKit
-
+import CoreData
 class ListTableViewController: UITableViewController {
 
     // Declare instance variables here
     var todoArray: [Item] = [Item]()
     let defaults: UserDefaults = UserDefaults.standard
-    let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+//        print(filePath)
         loadData()
     }
     
-    // MARK: - NSCoder encodes and decodes
+    // MARK: - CoreData save and read
     
     func saveData() {
-        
-        let encoder = PropertyListEncoder()
         do {
-            let data = try encoder.encode(self.todoArray)
-            try data.write(to: self.filePath!)
+            try context.save()
         } catch {
-            print("Error in saving item array.")
+            print("Error in saving. \(error)")
         }
     }
-    
-    func loadData() {
+
+    func loadData(Request fetchRequest : NSFetchRequest<Item> = Item.fetchRequest()) {
         
-        if let data = try? Data(contentsOf: filePath!) {
-            let decoder = PropertyListDecoder()
-            do {
-                let dataArray = try decoder.decode([Item].self, from: data)
-                todoArray = dataArray
-            } catch {
-                print("Error in loading item array")
-            }
+        do {
+            todoArray = try context.fetch(fetchRequest) as [Item]
+        } catch {
+            print("Error in reading. \(error)")
         }
+        
+        tableView.reloadData()
     }
 
     // MARK: - Table view related
@@ -72,6 +68,10 @@ class ListTableViewController: UITableViewController {
     //TODO: selected cell methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+//        //If were to delete item after being selected
+//        context.delete(todoArray[indexPath.row])
+//        todoArray.remove(at: indexPath.row)
+        
         todoArray[indexPath.row].done = !todoArray[indexPath.row].done
         saveData()
         tableView.reloadData()
@@ -88,7 +88,7 @@ class ListTableViewController: UITableViewController {
         
         let addAction = UIAlertAction(title: "OK", style: .default) { (action) in
             if tmpTextField.text != "" {
-                let newItem = Item()
+                let newItem = Item(context: self.context)
                 newItem.title = tmpTextField.text!
                 newItem.done = false
                 
@@ -114,4 +114,29 @@ class ListTableViewController: UITableViewController {
         
     }
     
+}
+
+//MARK: - Search Bar Related
+
+extension ListTableViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        let fetchRequest : NSFetchRequest<Item> = Item.fetchRequest()
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        let sort = NSSortDescriptor(key: "title", ascending: true)
+        fetchRequest.predicate = predicate
+        fetchRequest.sortDescriptors = [sort]
+        
+        loadData(Request: fetchRequest)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text!.count == 0 {
+            loadData()
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
 }
