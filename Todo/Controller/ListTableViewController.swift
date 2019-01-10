@@ -8,17 +8,22 @@
 
 import UIKit
 import CoreData
+
 class ListTableViewController: UITableViewController {
 
     // Declare instance variables here
     var todoArray: [Item] = [Item]()
-    let defaults: UserDefaults = UserDefaults.standard
-    let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+//    let defaults: UserDefaults = UserDefaults.standard
+//    let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
+    var selectedCategory: Category? {
+        didSet {
+            loadData()
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-//        print(filePath)
+ 
         loadData()
     }
     
@@ -32,7 +37,16 @@ class ListTableViewController: UITableViewController {
         }
     }
 
-    func loadData(Request fetchRequest : NSFetchRequest<Item> = Item.fetchRequest()) {
+    func loadData(Predicate searchPre : NSPredicate? = nil) {
+        let fetchRequest: NSFetchRequest<Item> = Item.fetchRequest()
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        
+        if let pre = searchPre {
+            fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [pre, categoryPredicate])
+            fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        } else {
+            fetchRequest.predicate = categoryPredicate
+        }
         
         do {
             todoArray = try context.fetch(fetchRequest) as [Item]
@@ -91,7 +105,7 @@ class ListTableViewController: UITableViewController {
                 let newItem = Item(context: self.context)
                 newItem.title = tmpTextField.text!
                 newItem.done = false
-                
+                newItem.parentCategory = self.selectedCategory
                 self.todoArray.append(newItem)
                 self.saveData()
             }
@@ -120,14 +134,10 @@ class ListTableViewController: UITableViewController {
 
 extension ListTableViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        
-        let fetchRequest : NSFetchRequest<Item> = Item.fetchRequest()
+
         let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        let sort = NSSortDescriptor(key: "title", ascending: true)
-        fetchRequest.predicate = predicate
-        fetchRequest.sortDescriptors = [sort]
         
-        loadData(Request: fetchRequest)
+        loadData(Predicate: predicate)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -139,4 +149,6 @@ extension ListTableViewController: UISearchBarDelegate {
             }
         }
     }
+    
+    
 }

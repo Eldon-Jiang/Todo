@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE5C980521E50A5F007722A7 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5C980421E50A5F007722A7 /* CategoryViewController.swift */; };
 		BE6BBE5121E1192300287D39 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BE6BBE4F21E1192300287D39 /* DataModel.xcdatamodeld */; };
 		BE7D9EB121DBB272002BBCDC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7D9EB021DBB272002BBCDC /* AppDelegate.swift */; };
 		BE7D9EB621DBB272002BBCDC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE7D9EB421DBB272002BBCDC /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BE5C980421E50A5F007722A7 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CategoryViewController.swift; path = Todo/Controller/CategoryViewController.swift; sourceTree = SOURCE_ROOT; };
 		BE6BBE5021E1192300287D39 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		BE7D9EAD21DBB272002BBCDC /* Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE7D9EB021DBB272002BBCDC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 		BE259B6921DC662E0094C7FE /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				BE5C980421E50A5F007722A7 /* CategoryViewController.swift */,
 				BE7D9EC221DBB2EC002BBCDC /* ListTableViewController.swift */,
 			);
 			path = Controller;
@@ -170,6 +173,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE5C980521E50A5F007722A7 /* CategoryViewController.swift in Sources */,
 				BE7D9EC321DBB2EC002BBCDC /* ListTableViewController.swift in Sources */,
 				BE6BBE5121E1192300287D39 /* DataModel.xcdatamodeld in Sources */,
 				BE7D9EB121DBB272002BBCDC /* AppDelegate.swift in Sources */,
