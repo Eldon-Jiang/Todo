@@ -16,6 +16,7 @@
 		BE7D9EC321DBB2EC002BBCDC /* ListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7D9EC221DBB2EC002BBCDC /* ListTableViewController.swift */; };
 		BE811A4C21E98DBF0028355A /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE811A4B21E98DBF0028355A /* Item.swift */; };
 		BE811A4E21E98E7F0028355A /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE811A4D21E98E7F0028355A /* Category.swift */; };
+		BED62CF921EBBA6F00B0D1D0 /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED62CF821EBBA6F00B0D1D0 /* SwipeTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		BE7D9EC221DBB2EC002BBCDC /* ListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewController.swift; sourceTree = "<group>"; };
 		BE811A4B21E98DBF0028355A /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		BE811A4D21E98E7F0028355A /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		BED62CF821EBBA6F00B0D1D0 /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 		F7A5D892CD12C1EDBA735506 /* Pods-Todo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todo.release.xcconfig"; path = "Pods/Target Support Files/Pods-Todo/Pods-Todo.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,6 +85,7 @@
 		BE259B6921DC662E0094C7FE /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				BED62CF821EBBA6F00B0D1D0 /* SwipeTableViewController.swift */,
 				BE5C980421E50A5F007722A7 /* CategoryViewController.swift */,
 				BE7D9EC221DBB2EC002BBCDC /* ListTableViewController.swift */,
 			);
@@ -257,6 +260,7 @@
 				BE811A4E21E98E7F0028355A /* Category.swift in Sources */,
 				BE811A4C21E98DBF0028355A /* Item.swift in Sources */,
 				BE7D9EC321DBB2EC002BBCDC /* ListTableViewController.swift in Sources */,
+				BED62CF921EBBA6F00B0D1D0 /* SwipeTableViewController.swift in Sources */,
 				BE7D9EB121DBB272002BBCDC /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

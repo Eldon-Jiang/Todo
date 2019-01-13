@@ -8,9 +8,8 @@
 
 import UIKit
 import RealmSwift
-import SwipeCellKit
 
-class ListTableViewController: UITableViewController {
+class ListTableViewController: SwipeTableViewController {
 
     // Declare instance variables here
     var todoArray: Results<Item>?
@@ -26,23 +25,16 @@ class ListTableViewController: UITableViewController {
         loadData()
     }
     
-    // MARK: - CoreData save and read
-    
+    // MARK: - Realm data save and read
 
     func loadData() {
-        
         todoArray = selectedCategory?.items.sorted(byKeyPath: "dateCreated", ascending: true)
-        
         tableView.reloadData()
     }
 
     // MARK: - Table view related
     
     //TODO: datasource methods
-    override func numberOfSections(in tableView: UITableView) -> Int {
-       
-        return 1
-    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -50,7 +42,7 @@ class ListTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "todoCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = todoArray?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.done ? .checkmark : .none
@@ -62,12 +54,11 @@ class ListTableViewController: UITableViewController {
     }
     
     //TODO: selected cell methods
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
         if let item = todoArray?[indexPath.row] {
             do {
                 try realm.write {
-                    //realm.delete(item)
                     item.done = !item.done
                 }
             } catch {
@@ -78,6 +69,19 @@ class ListTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
+    //MARK: - Override removeIt()
+    
+    override func removeIt(indexPath: IndexPath) {
+        if let tobeRemoved = todoArray?[indexPath.row] {
+            do {
+                try realm.write {
+                    realm.delete(tobeRemoved)
+                }
+            } catch {
+                print("Error in deleting item \(error)")
+            }
+        }
+    }
 
     //TODO: add new item in
     
