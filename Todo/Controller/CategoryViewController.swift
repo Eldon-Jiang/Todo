@@ -7,13 +7,13 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
 
     //Declare instance variables here
-    var categoryArray: [Category] = [Category]()
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var categoryArray: Results<Category>?
+    let realm = try! Realm()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,12 +30,12 @@ class CategoryViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return categoryArray.count
+        return categoryArray?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
-        cell.textLabel?.text = categoryArray[indexPath.row].name
+        cell.textLabel?.text = categoryArray?[indexPath.row].name ?? "No Category Added"
         return cell
     }
     //MARK: - Segue related
@@ -46,26 +46,24 @@ class CategoryViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destination = segue.destination as! ListTableViewController
         if let indexPath = tableView.indexPathForSelectedRow {
-            destination.selectedCategory = categoryArray[indexPath.row]
+            destination.selectedCategory = categoryArray?[indexPath.row]
         }
         
     }
     //MARK: - Save and read data
-    func saveData() {
+    func saveData(category: Category) {
         do {
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         } catch {
-            print("Erron in savaing. \(error)")
+            print("Erron in saving. \(error)")
         }
     }
     
-    func loadData(Request fetchRequest : NSFetchRequest<Category> = Category.fetchRequest()) {
-        do {
-            categoryArray = try context.fetch(fetchRequest) as [Category]
-        } catch {
-            print("Error in reading. \(error)")
-        }
+    func loadData() {
         
+        categoryArray = realm.objects(Category.self).sorted(byKeyPath: "name", ascending: true)
         tableView.reloadData()
     }
     
@@ -76,11 +74,10 @@ class CategoryViewController: UITableViewController {
         let alert = UIAlertController(title: "Add", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
             if tmpTextField.text != "" {
-                let newCate = Category(context: self.context)
+                let newCate = Category()
                 newCate.name = tmpTextField.text!
                 
-                self.categoryArray.append(newCate)
-                self.saveData()
+                self.saveData(category: newCate)
             }
             self.tableView.reloadData()
         }))
@@ -97,23 +94,3 @@ class CategoryViewController: UITableViewController {
     
 }
 
-//MARK : - Search bar related
-
-//extension CategoryViewController: UISearchBarDelegate {
-//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        let fetchRequest : NSFetchRequest<Category> = Category.fetchRequest()
-//        fetchRequest.predicate = NSPredicate(format: "name CONTAINS %@", searchBar.text!)
-//        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-//        loadData(Request: fetchRequest)
-//    }
-//
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        if searchBar.text!.count == 0 {
-//            loadData()
-//
-//            DispatchQueue.main.async {
-//                searchBar.resignFirstResponder()
-//            }
-//        }
-//    }
-//}
