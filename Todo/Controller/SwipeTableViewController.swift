@@ -8,12 +8,14 @@
 
 import UIKit
 import SwipeCellKit
+import ChameleonFramework
 
 class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.rowHeight = 80
+        tableView.separatorStyle = .none
     }
 
     // MARK: - Table view data source
@@ -25,6 +27,7 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "swipeCell", for: indexPath) as! SwipeTableViewCell
         cell.delegate = self
+        cell.textLabel?.adjustsFontSizeToFitWidth = true
         return cell
     }
     
@@ -49,5 +52,18 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
     
     func removeIt(indexPath: IndexPath) {
         print("Supposed to be override by subclass.")
+    }
+    
+    //MARK: - Update color
+    
+    func updateColor(color: UIColor) {
+        guard let nav = navigationController?.navigationBar else {
+            fatalError("No navigation bar")
+        }
+        let lightColor:UIColor = color.lighten(byPercentage: CGFloat(1)/CGFloat(10)) ?? FlatWhite()
+        nav.barTintColor = lightColor
+        nav.tintColor = ContrastColorOf(lightColor, returnFlat: true)
+        nav.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(lightColor, returnFlat: true)]
+        
     }
 }

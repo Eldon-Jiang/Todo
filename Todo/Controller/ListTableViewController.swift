@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class ListTableViewController: SwipeTableViewController {
 
@@ -19,12 +20,22 @@ class ListTableViewController: SwipeTableViewController {
             loadData()
         }
     }
+    
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = selectedCategory?.name
         loadData()
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        guard let category = selectedCategory else {
+            fatalError("No selected category")
+        }
+        title = category.name
+        updateColor(color: UIColor(hexString: category.colorCode) ?? FlatWhite())
+        searchBar.barTintColor = UIColor(hexString: category.colorCode) ?? FlatWhite()
+    }
+
     // MARK: - Realm data save and read
 
     func loadData() {
@@ -46,6 +57,10 @@ class ListTableViewController: SwipeTableViewController {
         if let item = todoArray?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.done ? .checkmark : .none
+            if let color = UIColor(hexString: selectedCategory!.colorCode)?.darken(byPercentage: CGFloat(indexPath.row)/CGFloat(todoArray!.count)) {
+                cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            }
         } else {
             cell.textLabel?.text = "Item unavailable..."
         }
